@@ -4,6 +4,7 @@ import { FilterCheckbox } from './filter-checkbox';
 import { Input } from '../ui/input';
 import { RangeSlider } from './range-slider';
 import CheckBoxFiltersGroup from './checkbox-filters-group';
+import { cn } from '@/lib/utils';
 
 type Props = {
 	className: string;
@@ -11,7 +12,7 @@ type Props = {
 
 export default function Filters({ className }: Props) {
 	return (
-		<div className={className}>
+		<div className={cn(className, 'min-w-[200px]')}>
 			<Title text='Filter' size='sm' className='mb-5 font-bold' />
 
 			{/* Upper Checkboxes*/}
