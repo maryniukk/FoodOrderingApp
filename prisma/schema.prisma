@@ -15,22 +15,27 @@ datasource db {
 //Создаем схему для юзера
 model User {
   //Это поле используется при каждой схеме
-  id        Int      @id @default(autoincrement())
-  fullName  String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Cart      Cart[]
+  id               Int               @id @default(autoincrement())
+  fullName         String
+  email            String            @unique
+  password         String?
+  Cart             Cart?
+  Order            Order[]
+  VerificationCode VerificationCode?
+  role             UserRole          @default(USER)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  provider         String?
+  providerId       String?
 }
 
 model Category {
   //Это поле используется при каждой схеме
   id        Int       @id @default(autoincrement())
   name      String    @unique
-  products  Product[] // создаем связь с Продуктом
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  products  Product[] // создаем связь с Продуктом
 }
 
 model Product {
@@ -38,54 +43,99 @@ model Product {
   id          Int           @id @default(autoincrement())
   name        String
   imageUrl    String
-  ingredients Ingredient[]
-  items       ProductItem[]
-  Category    Category?     @relation(fields: [categoryId], references: [id])
   categoryId  Int?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  ingredients Ingredient[]
+  items       ProductItem[]
+  Category    Category?     @relation(fields: [categoryId], references: [id])
 }
 
 model ProductItem {
-  //Это поле используется при каждой схеме
   id        Int        @id @default(autoincrement())
   price     Int
   size      Int?
   pizzaType Int?
   product   Product    @relation(fields: [productId], references: [id])
   productId Int
-  CartItem  CartItem[]
+  CartItems CartItem[]
 }
 
 model Ingredient {
-  id Int @id @default(autoincrement())
-
-  name      String
-  price     Int
-  imageUrl  String
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         Int       @id @default(autoincrement())
+  name       String
+  price      Int
+  imageUrl   String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  product    Product   @relation(fields: [productId], references: [id]) // Ингредиент принадлежит продукту
+  productId  Int // Внешний ключ для продукта
+  CartItem   CartItem? @relation(fields: [cartItemId], references: [id])
+  cartItemId Int?
 }
 
 model Cart {
-  id          Int        @id @default(autoincrement())
-  user        User?      @relation(fields: [userId], references: [id])
-  userId      Int?
+  id     Int   @id @default(autoincrement())
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?  @unique
+
   token       String //Токен для зареганых и не зареганых юзеров
   totalAmount Int        @default(0)
+  items       CartItem[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  CartItem    CartItem[]
+  Order       Order[]
 }
 
 model CartItem {
-  id            Int         @id @default(autoincrement())
-  productItem   ProductItem @relation(fields: [productItemId], references: [id])
+  id            Int          @id @default(autoincrement())
+  productItem   ProductItem  @relation(fields: [productItemId], references: [id])
   productItemId Int
-  cart          Cart        @relation(fields: [cartId], references: [id])
+  cart          Cart         @relation(fields: [cartId], references: [id])
   cartId        Int
   quantity      Int
-  pizzaSize     Int?
-  pizzaType     Int?
+  // так же будем хранить тут добавки к пицце 
+  ingridients   Ingredient[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  user        User?       @relation(fields: [userId], references: [id])
+  userId      Int?
+  token       String
+  totalAmount Int
+  status      OrderStatus
+  paymentId   String?
+  Cart        Cart?       @relation(fields: [cartId], references: [id])
+  cartId      Int?
+  items       Json
+  // Добавляем поле для хранения адреса доставки
+  fullName    String
+  address     String
+  email       String
+  phone       String
+  comment     String?
+}
+
+model VerificationCode {
+  id               Int      @id @default(autoincrement())
+  code             String
+  user             User     @relation(fields: [userId], references: [id])
+  userId           Int      @unique
+  expiresAt        DateTime @default(now())
+  createdAt        DateTime @default(now())
+  verificationCode String?
+}
+
+enum OrderStatus {
+  PENDING
+  DELIVERED
+  CANCELED
+}
+
+enum UserRole {
+  ADMIN
+  USER
 }
