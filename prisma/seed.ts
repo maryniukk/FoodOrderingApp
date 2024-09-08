@@ -5,7 +5,7 @@ async function up() {
 	await prisma.user.createMany({
 		data: [
 			{
-				fullName: 'Admin Admin Admin Admin',
+				fullName: 'Admin v1.0.0',
 				email: 'admin@admin.com',
 				password: hashSync('admin', 10),
 				role: 'ADMIN',
@@ -18,6 +18,9 @@ async function up() {
 				verified: true,
 			},
 		],
+	});
+	await prisma.category.createMany({
+		data: categories,
 	});
 }
 async function down() {
