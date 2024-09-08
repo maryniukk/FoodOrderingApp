@@ -21,6 +21,10 @@ async function up() {
 			},
 		],
 	});
+
+	await prisma.category.createMany({
+		data: categories,
+	});
 }
 
 async function down() {
