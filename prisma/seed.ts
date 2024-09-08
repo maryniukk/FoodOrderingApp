@@ -1,10 +1,11 @@
+import { categories } from './constants';
 import { prisma } from './prisma-client';
 import { hashSync } from 'bcryptjs';
 async function up() {
 	await prisma.user.createMany({
 		data: [
 			{
-				fullName: 'Admin Admin',
+				fullName: 'Admin Admin Admin Admin',
 				email: 'admin@admin.com',
 				password: hashSync('admin', 10),
 				role: 'ADMIN',
