@@ -4,8 +4,4 @@ export const categories = [
 	{ name: 'Snacks' },
 	{ name: 'Cocktails' },
 	{ name: 'Drinks' },
-	{ name: 'Desserts' },
-	{ name: 'Salads' },
-	{ name: 'Soup' },
-	{ name: 'Pasta' },
 ];
