@@ -77,7 +77,6 @@ async function up() {
 	// Создаем вариации теста, размера для пиццы
 	await prisma.productItem.createMany({
 		data: [
-			// Первая вариация
 			{
 					productId: pizza1.id,
 					pizzaType: 1,
