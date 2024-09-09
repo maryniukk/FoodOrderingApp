@@ -65,7 +65,7 @@ model ProductItem {
 model Ingredient {
   id         Int       @id @default(autoincrement())
   name       String
-  price      Int
+  price      Int?
   imageUrl   String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
