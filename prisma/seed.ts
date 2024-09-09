@@ -83,6 +83,18 @@ async function up() {
 					price: randomNumber(7, 11),
 					size: 20,
 			},
+			{
+				productId: pizza1.id,
+				pizzaType: 2,
+				price: randomNumber(7, 11),
+				size: 30,
+		},
+		{
+			productId: pizza1.id,
+			pizzaType: 2 ,
+			price: randomNumber(7, 11),
+			size: 40,
+	},
 		]
 	})
 
