@@ -25,6 +25,7 @@ const generateProductItem = ({
 };
 
 async function up() {
+	// Вшиваем пользователей
 	await prisma.user.createMany({
 		data: [
 			{
@@ -45,23 +46,47 @@ async function up() {
 	});
 
 	await prisma.category.createMany({
+		// Создаем категории
 		data: categories,
 	});
 
 	await prisma.product.createMany({
+		// Создаем пиццы
 		data: products,
 	});
 
+	await prisma.cart.createMany({
+		// Создаем корзины для пользователей
+		data: [
+			{
+				userId: 1,
+				token: '1111',
+				totalAmount: 0,
+			},
+			{
+				userId: 2,
+				token: '2222',
+				totalAmount: 0,
+			},
+		],
+	});
+	// Создаем корзину для пользователя
+	// await prisma.cartItem.create ({
+
+	// })
+
 	const createdIngredients = await prisma.ingredient.createMany({
+		// Создаем ингредиенты
 		data: ingredients.map((ingredient) => ({
 			...ingredient,
 			productId: 1,
 		})),
 	});
 
-	const allIngredients = await prisma.ingredient.findMany();
+	const allIngredients = await prisma.ingredient.findMany(); // Получаем все ингредиенты
 
 	const pizza1 = await prisma.product.create({
+		//
 		data: {
 			name: 'Пепперони фреш',
 			imageUrl:
@@ -120,9 +145,14 @@ async function up() {
 }
 
 async function down() {
+	// Удаляем все данные
 	await prisma.$executeRaw`TRUNCATE TABLE "User" RESTART IDENTITY CASCADE;`;
+	await prisma.$executeRaw`TRUNCATE TABLE "Category" RESTART IDENTITY CASCADE;`;
+	await prisma.$executeRaw`TRUNCATE TABLE "Ingredient" RESTART IDENTITY CASCADE;`;
 	await prisma.$executeRaw`TRUNCATE TABLE "Product" RESTART IDENTITY CASCADE;`;
-	await prisma.$executeRaw`TRUNCATE TABLE "Order" RESTART IDENTITY CASCADE;`;
+	await prisma.$executeRaw`TRUNCATE TABLE "ProductItem" RESTART IDENTITY CASCADE;`;
+	await prisma.$executeRaw`TRUNCATE TABLE "Cart" RESTART IDENTITY CASCADE;`;
+	await prisma.$executeRaw`TRUNCATE TABLE "CartItem" RESTART IDENTITY CASCADE;`;
 }
 
 async function main() {
