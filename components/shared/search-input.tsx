@@ -5,13 +5,15 @@ import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
 import { useClickAway } from 'react-use';
 import Link from 'next/link';
+import { api } from '@/services/api-client';
 
 type Props = {
 	className?: string;
 };
 
 export default function SearchInput({ className }: Props) {
-	const [focused, setFocused] = useState(false);
+	const [searchQuery, setSearchQuery] = useState<string | null>('');
+	const [focused, setFocused] = useState<boolean>(false);
 
 	const ref = useRef(null);
 	useClickAway(ref, () => {
@@ -24,6 +26,10 @@ export default function SearchInput({ className }: Props) {
 			console.log('focused');
 		}
 	}, [focused]);
+
+	React.useEffect(() => {
+		api.products.search(searchQuery || ''); // Если searchQuery не null, то вызываем функцию search
+	}, [searchQuery]); // Если searchQuery изменился, то вызываем функцию search
 
 	return (
 		<>
@@ -47,6 +53,8 @@ export default function SearchInput({ className }: Props) {
 					type='text'
 					placeholder='What you want to eat? '
 					onFocus={() => setFocused(true)}
+					value={searchQuery || ''}
+					onChange={(e) => setSearchQuery(e.target.value)}
 				/>
 				<div
 					className={cn(
