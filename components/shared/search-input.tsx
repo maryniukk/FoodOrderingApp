@@ -3,10 +3,12 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
-import { useClickAway } from 'react-use';
-import Link from 'next/link';
-import { search } from '@/services/products';
+import { useClickAway, useDebounce } from 'react-use';
 import { Product } from '@prisma/client';
+import { api } from '@/services/api-client';
+import { search } from '@/services/products';
+import Error from 'next/error';
+import Link from 'next/link';
 
 type Props = {
 	className?: string;
@@ -19,7 +21,6 @@ export default function SearchInput({ className }: Props) {
 
 	const ref = useRef(null);
 	useClickAway(ref, () => {
-		console.log('OUTSIDE CLICKED');
 		setFocused(false);
 	});
 
@@ -29,13 +30,20 @@ export default function SearchInput({ className }: Props) {
 		}
 	}, [focused]);
 
-	useEffect(() => {
-		if (searchQuery) {
-			search(searchQuery).then((items) => setProducts(items));
-		} else {
-			setProducts([]);
-		}
-	}, [searchQuery]);
+	useDebounce(
+		() => {
+			if (searchQuery.trim()) {
+				// Проверяем, что в поисковом запросе есть данные
+				console.log('Sending search query:', searchQuery); // Логируем поисковый запрос
+				api.products.search(searchQuery).then((products) => {
+					console.log('Products from API:', products); // Логируем полученные данные
+					setProducts(products); // Устанавливаем массив продуктов
+				});
+			}
+		},
+		500,
+		[searchQuery]
+	);
 
 	return (
 		<>
@@ -56,33 +64,32 @@ export default function SearchInput({ className }: Props) {
 				<Input
 					className='rounded-2xl outline-none w-full bg-gray-50 pl-11'
 					type='text'
-					placeholder='What you want to eat?'
+					placeholder='What are you looking for?'
 					onFocus={() => setFocused(true)}
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 				/>
 				<div
 					className={cn(
-						'absolute w-full bg-white rounded-xl py-2 top-14 shadow-md transition-all duration-200 invisible opacity-0 z-30',
-						focused ? 'visible opacity-100 top-12' : ''
+						'absolute w-full bg-white rounded-xl py-2 top-14 shadow-md transition-all duration-300 invisible opacity-0',
+						focused && 'visible opacity-100 top-12'
 					)}
 				>
-					{Array.isArray(products) &&
+					{products &&
+						products.length > 0 &&
 						products.map((product) => (
-							<Link
-								key={product.id}
-								className='flex items-center gap-3 w-full px-3 py-2 hover:bg-primary/10'
-								href={`/products/${product.id}`}
-							>
-								<img
-									className='rounded-sm h-10 w-10'
-									src={product.imageUrl}
-									alt={product.name}
-								/>
-								<span>{product.name}</span>
+							<Link href={`/products/${product.id}`} key={product.id}>
+								<p className='px-4 py-2 hover:bg-gray-100'>{product.name}</p>
 							</Link>
 						))}
 				</div>
+			</div>
+
+			{/* additional info */}
+			<div className='mt-4'>
+				<p>Search Query: {searchQuery}</p>
+				<p>Quantity: {products ? products.length : 0}</p>
+				<p>Products: {JSON.stringify(products)}</p>
 			</div>
 		</>
 	);

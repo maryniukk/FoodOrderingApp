@@ -11,11 +11,11 @@ export default function Home() {
 			<Container className='mt-10'>
 				<Title text='All pizzas' size='lg' className='font-extrabold' />
 			</Container>
-			<TopBar />
+			<TopBar className='' />
 			<Container className='pb-14 pt-10'>
 				<div className='flex'>
 					{/* Фильтрация */}
-					<Filters />
+					<Filters className='' />
 					<div className='w-[250px]'></div>
 					{/* Список товаров */}
 					<div className='flex-1'>
@@ -30,6 +30,7 @@ export default function Home() {
 										imageUrl:
 											'https://cdn.dodostatic.net/static/Img/Products/d9c609f1422247f2b87b6293eb461ff0_1875x1875.jpeg',
 										items: [{ price: 10 }],
+										price: 10,
 									},
 									{
 										id: 2,
@@ -37,6 +38,7 @@ export default function Home() {
 										imageUrl:
 											'https://cdn.dodostatic.net/static/Img/Products/d9c609f1422247f2b87b6293eb461ff0_1875x1875.jpeg',
 										items: [{ price: 12 }],
+										price: 12,
 									},
 									{
 										id: 3,
@@ -44,6 +46,7 @@ export default function Home() {
 										imageUrl:
 											'https://cdn.dodostatic.net/static/Img/Products/d9c609f1422247f2b87b6293eb461ff0_1875x1875.jpeg',
 										items: [{ price: 15 }],
+										price: 15,
 									},
 									{
 										id: 4,
@@ -51,6 +54,7 @@ export default function Home() {
 										imageUrl:
 											'https://cdn.dodostatic.net/static/Img/Products/d9c609f1422247f2b87b6293eb461ff0_1875x1875.jpeg',
 										items: [{ price: 8 }],
+										price: 8,
 									},
 								]}
 							/>
@@ -64,6 +68,7 @@ export default function Home() {
 										imageUrl:
 											'https://cdn.dodostatic.net/static/Img/Products/d9c609f1422247f2b87b6293eb461ff0_1875x1875.jpeg',
 										items: [{ price: 10 }],
+										price: 10,
 									},
 									{
 										id: 2,
@@ -71,6 +76,7 @@ export default function Home() {
 										imageUrl:
 											'https://cdn.dodostatic.net/static/Img/Products/d9c609f1422247f2b87b6293eb461ff0_1875x1875.jpeg',
 										items: [{ price: 12 }],
+										price: 12,
 									},
 									{
 										id: 3,
@@ -78,6 +84,7 @@ export default function Home() {
 										imageUrl:
 											'https://cdn.dodostatic.net/static/Img/Products/d9c609f1422247f2b87b6293eb461ff0_1875x1875.jpeg',
 										items: [{ price: 15 }],
+										price: 15,
 									},
 									{
 										id: 4,
@@ -85,6 +92,7 @@ export default function Home() {
 										imageUrl:
 											'https://cdn.dodostatic.net/static/Img/Products/d9c609f1422247f2b87b6293eb461ff0_1875x1875.jpeg',
 										items: [{ price: 8 }],
+										price: 8,
 									},
 								]}
 								categoryId={2} // Обратите внимание на изменённый categoryId
