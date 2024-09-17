@@ -1,6 +1,6 @@
 'use client';
 import React, { useRef, useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { Link, Search } from 'lucide-react';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
 import { useClickAway, useDebounce } from 'react-use';
@@ -29,19 +29,21 @@ export default function SearchInput({ className }: Props) {
 		}
 	}, [focused]);
 
-	// Логика для отправки запроса на сервер
+	//Хук, для того, чтобы сразу не отправлять запросы на сервер, а отправить после ввода 500мс
 	useDebounce(
 		() => {
+			// Проверяем, что в поисковом запросе есть данные
 			if (searchQuery.trim()) {
-				// Проверяем, что в поисковом запросе есть данные
-				console.log('Отправка поискового запроса:', searchQuery); // Логируем поисковый запрос
 				api.products.search(searchQuery).then((response) => {
-					console.log('Продукты от API:', response); // Логируем полученные данные
 					setProducts(response.products); // Устанавливаем массив продуктов
 				});
 			}
+			// Если поисковый запрос пуст, то очищаем массив
+			if (searchQuery.trim() === '') {
+				setProducts([]);
+			}
 		},
-		500,
+		250,
 		[searchQuery]
 	);
 
@@ -69,24 +71,34 @@ export default function SearchInput({ className }: Props) {
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 				/>
-				<div
-					className={cn(
-						'absolute w-full bg-white rounded-xl py-2 top-14 shadow-md transition-all duration-300 invisible opacity-0',
-						focused && 'visible opacity-100 top-12'
-					)}
-				>
-					{products.length > 0 &&
-						products.map((product: Product) => (
-							<div key={product.id}>{product.name}</div>
-						))}
-				</div>
-			</div>
-
-			{/* additional info */}
-			<div className='mt-4'>
-				<p>Search Query: {searchQuery}</p>
-				<p>Quantity: {products ? products.length : 0}</p>
-				<p>Products: {JSON.stringify(products)}</p>
+				{focused && (
+					<div
+						className={cn(
+							'absolute w-full bg-white rounded-xl py-2 top-14 shadow-md transition-all duration-100 invisible opacity-0',
+							searchQuery && 'visible delay-700 opacity-100 top-12'
+						)}
+					>
+						{products.length > 0 ? (
+							products.map((product: Product) => (
+								<a
+									href={`/product/${product.id}`}
+									className='flex items-center gap-3 w-full px-3 py-2 hover:bg-primary/10'
+								>
+									<img
+										className='w-8 h-8 rounded-sm'
+										src={product.imageUrl}
+										alt={product.name}
+									/>
+									<span>{product.name}</span>
+								</a>
+							))
+						) : (
+							<div className='flex items-center gap-3 w-full px-3 py-2 hover:bg-primary/10'>
+								<span className='text-gray-400'>No products found</span>
+							</div>
+						)}
+					</div>
+				)}
 			</div>
 		</>
 	);
