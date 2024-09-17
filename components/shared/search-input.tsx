@@ -6,9 +6,6 @@ import { cn } from '@/lib/utils';
 import { useClickAway, useDebounce } from 'react-use';
 import { Product } from '@prisma/client';
 import { api } from '@/services/api-client';
-import { search } from '@/services/products';
-import Error from 'next/error';
-import Link from 'next/link';
 
 type Props = {
 	className?: string;
@@ -19,25 +16,28 @@ export default function SearchInput({ className }: Props) {
 	const [focused, setFocused] = useState<boolean>(false);
 	const [products, setProducts] = useState<Product[]>([]);
 
+	// Реф который следит за кликом вне поиска
 	const ref = useRef(null);
 	useClickAway(ref, () => {
 		setFocused(false);
 	});
 
+	// Логика для отслеживания фокуса
 	useEffect(() => {
 		if (focused) {
 			console.log('focused');
 		}
 	}, [focused]);
 
+	// Логика для отправки запроса на сервер
 	useDebounce(
 		() => {
 			if (searchQuery.trim()) {
 				// Проверяем, что в поисковом запросе есть данные
-				console.log('Sending search query:', searchQuery); // Логируем поисковый запрос
-				api.products.search(searchQuery).then((products) => {
-					console.log('Products from API:', products); // Логируем полученные данные
-					setProducts(products); // Устанавливаем массив продуктов
+				console.log('Отправка поискового запроса:', searchQuery); // Логируем поисковый запрос
+				api.products.search(searchQuery).then((response) => {
+					console.log('Продукты от API:', response); // Логируем полученные данные
+					setProducts(response.products); // Устанавливаем массив продуктов
 				});
 			}
 		},
@@ -64,7 +64,7 @@ export default function SearchInput({ className }: Props) {
 				<Input
 					className='rounded-2xl outline-none w-full bg-gray-50 pl-11'
 					type='text'
-					placeholder='What are you looking for?'
+					placeholder='What would you like to eat?'
 					onFocus={() => setFocused(true)}
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
@@ -75,12 +75,9 @@ export default function SearchInput({ className }: Props) {
 						focused && 'visible opacity-100 top-12'
 					)}
 				>
-					{products &&
-						products.length > 0 &&
-						products.map((product) => (
-							<Link href={`/products/${product.id}`} key={product.id}>
-								<p className='px-4 py-2 hover:bg-gray-100'>{product.name}</p>
-							</Link>
+					{products.length > 0 &&
+						products.map((product: Product) => (
+							<div key={product.id}>{product.name}</div>
 						))}
 				</div>
 			</div>
