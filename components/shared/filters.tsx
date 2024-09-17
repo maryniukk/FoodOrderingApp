@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { Title } from './title';
 import { FilterCheckbox } from './filter-checkbox';
@@ -5,12 +6,20 @@ import { Input } from '../ui/input';
 import { RangeSlider } from './range-slider';
 import CheckBoxFiltersGroup from './checkbox-filters-group';
 import { cn } from '@/lib/utils';
+import { useFilterIngredients } from '@/hooks/useFilterIngredients';
 
 type Props = {
 	className: string;
 };
 
 export default function Filters({ className }: Props) {
+	const { ingredients } = useFilterIngredients();
+
+	const items = ingredients.map((item) => ({
+		value: item.id.toString(),
+		text: item.name,
+	}));
+
 	return (
 		<div className={cn(className, 'min-w-[200px]')}>
 			<Title text='Filter' size='sm' className='mb-5 font-bold' />
@@ -41,30 +50,8 @@ export default function Filters({ className }: Props) {
 				title='Ingredients'
 				className='mt-5'
 				limit={4}
-				defaultItems={[
-					{ text: 'Сырный соус', value: '1' },
-					{ text: 'Моцарелла', value: '2' },
-					{ text: 'Чеснок', value: '3' },
-					{ text: 'Соленные огурчики', value: '4' },
-				]}
-				items={[
-					{ text: 'Сырный соус', value: '1' },
-					{ text: 'Моцарелла', value: '2' },
-					{ text: 'Чеснок', value: '3' },
-					{ text: 'Соленные огурчики', value: '4' },
-					{ text: 'Сырный соус', value: '5' },
-					{ text: 'Моцарелла', value: '6' },
-					{ text: 'Чеснок', value: '7' },
-					{ text: 'Соленные огурчики', value: '8' },
-					{ text: 'Сырный соус', value: '9' },
-					{ text: 'Моцарелла', value: '10' },
-					{ text: 'Чеснок', value: '11' },
-					{ text: 'Соленные огурчики', value: '12' },
-					{ text: 'Сырный соус', value: '13' },
-					{ text: 'Моцарелла', value: '14' },
-					{ text: 'Чеснок', value: '15' },
-					{ text: 'Соленные огурчики', value: '16' },
-				]}
+				defaultItems={items.slice(0, 6)}
+				items={items}
 			/>
 		</div>
 	);
