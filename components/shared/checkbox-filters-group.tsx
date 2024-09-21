@@ -12,7 +12,7 @@ type Props = {
 	defaultItems?: Item[];
 	limit?: number;
 	searchInputPlaceHolder?: string;
-	onChange?: (values: string[]) => void;
+	onClickCheckBox?: (id: string) => void;
 	defaultValue?: string;
 	className?: string;
 };
@@ -20,11 +20,10 @@ type Props = {
 export default function CheckBoxFiltersGroup({
 	title,
 	items,
-	defaultItems,
 	limit = 5,
 	searchInputPlaceHolder = 'Search...',
 	className,
-	onChange,
+	onClickCheckBox,
 	defaultValue,
 }: Props) {
 	//Создаем стейт для показа или скрытия всего списка
@@ -34,7 +33,7 @@ export default function CheckBoxFiltersGroup({
 	const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchValue(e.target.value);
 	};
-
+	// Функция для фильтрации списка
 	const list = showAll
 		? items.filter((item) =>
 				item.text.toLowerCase().includes(searchValue.toLowerCase())
@@ -44,7 +43,6 @@ export default function CheckBoxFiltersGroup({
 	return (
 		<div className={className}>
 			<p className='font-bold mb-3'>{title}</p>
-
 			{showAll && (
 				<div className='mb-5'>
 					<Input
@@ -58,18 +56,19 @@ export default function CheckBoxFiltersGroup({
 			<div className='flex flex-col gap-4 max-h-96 pr-2 overflow-auto scrollbar'>
 				{/* Список добавок */}
 				{list.map((item, index) => (
+					//Чекбокс
 					<FilterCheckbox
 						key={index}
 						text={item.text}
 						value={item.value}
+						// то, что будет отображаться справа от чекбокса
 						endAdornment={item.endAdornment}
 						checked={false}
-						onCheckedChange={() => {
-							// Добавьте вашу логику для onCheckedChange
-						}}
+						onCheckedChange={() => onClickCheckBox?.(item.value)}
 					/>
 				))}
 			</div>
+
 			{items.length > limit && (
 				<div className={showAll ? 'border-t border-t-neutral-100 mt-4' : ''}>
 					<button
