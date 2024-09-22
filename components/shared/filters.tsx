@@ -14,8 +14,8 @@ type Props = {
 
 export default function Filters({ className }: Props) {
 	//Оставновился тут 6:18
-	сonst {ingredients, onAddId, selected} = useFilterIngredients()
-	const { ingredients } = useFilterIngredients();
+
+	const { ingredients, onAddId, selectedIds } = useFilterIngredients();
 
 	const items = ingredients.map((item) => ({
 		value: item.id.toString(),
@@ -54,7 +54,8 @@ export default function Filters({ className }: Props) {
 				limit={4}
 				defaultItems={items.slice(0, 6)}
 				items={items}
-				onClickCheckBox={(id) => console.log(id)}
+				onClickCheckBox={onAddId}
+				selectedIds={selectedIds}
 			/>
 		</div>
 	);
