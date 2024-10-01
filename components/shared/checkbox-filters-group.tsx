@@ -15,10 +15,12 @@ type Props = {
 	onClickCheckBox?: (id: string) => void;
 	defaultValue?: string;
 	className?: string;
-	selectedIds?: Set<string>;
+	selected?: Set<string>;
+	name?: string;
 };
 
 export default function CheckBoxFiltersGroup({
+	defaultItems,
 	title,
 	items,
 	limit = 5,
@@ -26,7 +28,8 @@ export default function CheckBoxFiltersGroup({
 	className,
 	onClickCheckBox,
 	defaultValue,
-	selectedIds,
+	selected,
+	name,
 }: Props) {
 	//Создаем стейт для показа или скрытия всего списка
 	const [showAll, setShowAll] = useState(false);
@@ -40,7 +43,7 @@ export default function CheckBoxFiltersGroup({
 		? items.filter((item) =>
 				item.text.toLowerCase().includes(searchValue.toLowerCase())
 		  )
-		: items.slice(0, limit);
+		: defaultItems || items.slice(0, limit);
 
 	return (
 		<div className={className}>
@@ -65,8 +68,9 @@ export default function CheckBoxFiltersGroup({
 						value={item.value}
 						// то, что будет отображаться справа от чекбокса
 						endAdornment={item.endAdornment}
-						checked={selectedIds?.has(item.value)}
+						checked={selected?.has(item.value)}
 						onCheckedChange={() => onClickCheckBox?.(item.value)}
+						name={name}
 					/>
 				))}
 			</div>
